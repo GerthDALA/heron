@@ -39,44 +39,44 @@ HIGH_4A_CASES = [
 
 
 @pytest.mark.parametrize("text", HIGH_4A_CASES)
-def test_high_risk_article_4a(regex_engine, text):
+def test_high_risk_annex_4a(regex_engine, text):
     found = matches_for(regex_engine, text)
     assert found, f"Expected a match for prohibited claim: {text!r}"
-    assert any(m["risk_level"] == "high" and m["empco_article"] == "Article 4a" for m in found), \
-        f"Expected HIGH / Article 4a for {text!r}, got {found}"
+    assert any(m["risk_level"] == "high" and m["empco_article"] == "Annexe I, Point 4a" for m in found), \
+        f"Expected HIGH / Annexe I, Point 4a for {text!r}, got {found}"
 
 
-# --- Must return HIGH risk (Article 4d carbon claims) ---
+# --- Must return HIGH risk (Annex I, Point 4c — offset-based carbon claims) ---
 
-HIGH_4D_CASES = [
+HIGH_4C_CARBON_CASES = [
     "carbon neutral by 2030",
     "nous serons carbon neutral en 2030",
     "objectif zéro carbone 2030",
 ]
 
 
-@pytest.mark.parametrize("text", HIGH_4D_CASES)
-def test_high_risk_article_4d(regex_engine, text):
+@pytest.mark.parametrize("text", HIGH_4C_CARBON_CASES)
+def test_high_risk_annex_4c_carbon(regex_engine, text):
     found = matches_for(regex_engine, text)
     assert found, f"Expected a match for carbon claim: {text!r}"
-    assert any(m["risk_level"] == "high" and m["empco_article"] == "Article 4d" for m in found), \
-        f"Expected HIGH / Article 4d for {text!r}, got {found}"
+    assert any(m["risk_level"] == "high" and m["empco_article"] == "Annexe I, Point 4c" for m in found), \
+        f"Expected HIGH / Annexe I, Point 4c for {text!r}, got {found}"
 
 
-# --- Must return MEDIUM risk (Article 4c single-aspect superlatives) ---
+# --- Must return MEDIUM risk (Annex I, Point 4b — single-aspect superlatives) ---
 
-MEDIUM_4C_CASES = [
+MEDIUM_4B_CASES = [
     "notre collection la plus durable à ce jour",
     "le packaging le plus eco-conçu de notre gamme",
 ]
 
 
-@pytest.mark.parametrize("text", MEDIUM_4C_CASES)
-def test_medium_risk_article_4c(regex_engine, text):
+@pytest.mark.parametrize("text", MEDIUM_4B_CASES)
+def test_medium_risk_annex_4b(regex_engine, text):
     found = matches_for(regex_engine, text)
     assert found, f"Expected a match for superlative claim: {text!r}"
-    assert any(m["risk_level"] == "medium" and m["empco_article"] == "Article 4c" for m in found), \
-        f"Expected MEDIUM / Article 4c for {text!r}, got {found}"
+    assert any(m["risk_level"] == "medium" and m["empco_article"] == "Annexe I, Point 4b" for m in found), \
+        f"Expected MEDIUM / Annexe I, Point 4b for {text!r}, got {found}"
     assert not any(m["risk_level"] == "high" for m in found), \
         f"Superlative claim must not also trigger a HIGH generic rule: {found}"
 

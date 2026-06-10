@@ -1,0 +1,55 @@
+{
+  "corpus": {
+    "id": "FR_CONSUMER_CODE",
+    "short_name": "Code de la consommation",
+    "full_name": "Code de la consommation — Articles L. 121-2 et L. 132-2",
+    "jurisdiction": "FR",
+    "law_type": "code",
+    "official_reference": "Code de la consommation, version consolidée (Légifrance)",
+    "publication_date": "2016-07-01",
+    "application_date": "2024-05-12",
+    "status": "active"
+  },
+  "articles": [
+    {
+      "id": "FR_CC_L121_2",
+      "article_ref": "Article L. 121-2",
+      "article_title": "Pratiques commerciales trompeuses — allégations environnementales",
+      "full_text": "Une pratique commerciale est trompeuse si elle est commise dans l'une des circonstances suivantes : 1° Lorsqu'elle crée une confusion avec un autre bien ou service, une marque, un nom commercial ou un autre signe distinctif d'un concurrent ; 2° Lorsqu'elle repose sur des allégations, indications ou présentations fausses ou de nature à induire en erreur et portant sur l'un ou plusieurs des éléments suivants : [...] b) Les caractéristiques essentielles du bien ou du service, à savoir : ses qualités substantielles, sa composition, ses accessoires, son origine, notamment au regard des règles justifiant l'apposition des mentions « fabriqué en France » ou « origine France » ou de toute mention, signe ou symbole équivalent, au sens du code des douanes de l'Union sur l'origine non préférentielle des produits, sa quantité, son mode et sa date de fabrication, les conditions de son utilisation et son aptitude à l'usage, ses propriétés et les résultats attendus de son utilisation, notamment son impact environnemental, ainsi que les résultats et les principales caractéristiques des tests et contrôles effectués sur le bien ou le service ; [...] e) La portée des engagements de l'annonceur, notamment en matière environnementale, la nature, le procédé ou le motif de la vente ou de la prestation de services.",
+      "summary": "Établit que les allégations environnementales fausses ou trompeuses (caractéristiques du produit, point b ; engagements environnementaux de l'annonceur, point e) constituent une pratique commerciale trompeuse.",
+      "applies_to": "all",
+      "prohibited_behaviour": "Allégations fausses ou trompeuses sur les caractéristiques environnementales d'un produit ou les engagements environnementaux de l'annonceur",
+      "evidence_required": "Documentation technique vérifiable pour chaque allégation",
+      "effective_from": "2023-01-01",
+      "verification_status": "pending_source",
+      "source_note": "Extraits des points pertinents (2° b et e). À remplacer par le texte intégral consolidé Légifrance (LEGIARTI) avant publication — validation juriste requise."
+    },
+    {
+      "id": "FR_CC_L132_2",
+      "article_ref": "Article L. 132-2",
+      "article_title": "Sanctions — pratiques commerciales trompeuses",
+      "full_text": "Les pratiques commerciales trompeuses mentionnées aux articles L. 121-2 à L. 121-4 sont punies d'un emprisonnement de deux ans et d'une amende de 300 000 euros.\nLe montant de l'amende peut être porté, de manière proportionnée aux avantages tirés du délit, à 10 % du chiffre d'affaires moyen annuel, calculé sur les trois derniers chiffres d'affaires annuels connus à la date des faits, ou à 50 % des dépenses engagées pour la réalisation de la publicité ou de la pratique constituant ce délit. Ce taux est porté à 80 % dans le cas des pratiques commerciales trompeuses mentionnées aux b et e du 2° de l'article L. 121-2 lorsqu'elles reposent sur des allégations en matière environnementale.\nLorsque l'infraction a été commise par l'utilisation d'un service de communication au public en ligne ou par le biais d'un support numérique ou électronique, les peines sont portées à cinq ans d'emprisonnement et à 750 000 euros d'amende.",
+      "summary": "Sanctions : jusqu'à 2 ans d'emprisonnement + 300 000 EUR d'amende. L'amende peut être portée à 10 % du CA annuel moyen (3 derniers exercices connus) ou 50 % des dépenses publicitaires — taux porté à 80 % des dépenses pour les allégations environnementales trompeuses. Infraction en ligne : 5 ans + 750 000 EUR. Personnes morales : quintuple de l'amende (art. 131-38 du code pénal).",
+      "applies_to": "all",
+      "prohibited_behaviour": "Toute pratique commerciale trompeuse au sens des articles L. 121-2 à L. 121-4",
+      "evidence_required": null,
+      "effective_from": "2024-05-12",
+      "verification_status": "verified_source",
+      "source_note": "Verbatim Légifrance LEGIARTI000049532070, version en vigueur depuis le 12/05/2024 (modifié par LOI n°2024-420 du 10 mai 2024, art. 11).",
+      "penalties": {
+        "natural_person": {
+          "imprisonment_years": 2,
+          "fine_eur": 300000,
+          "online_imprisonment_years": 5,
+          "online_fine_eur": 750000
+        },
+        "proportional": {
+          "turnover_percentage": 0.10,
+          "ad_spend_percentage": 0.50,
+          "env_claims_ad_spend_percentage": 0.80
+        },
+        "legal_entity_note": "Personnes morales : amende quintuplée en application de l'article 131-38 du code pénal."
+      }
+    }
+  ]
+}

@@ -17,7 +17,19 @@ async def _scan_claims(db: aiosqlite.Connection, scan_id: str) -> list[dict]:
     cursor = await db.execute(
         "SELECT * FROM claims WHERE scan_id = ? ORDER BY exposure_eur DESC", (scan_id,)
     )
-    return [dict(row) for row in await cursor.fetchall()]
+    claims = [dict(row) for row in await cursor.fetchall()]
+    # Attach evidence downgrade audit info (certificate name, original risk)
+    for claim in claims:
+        cursor = await db.execute(
+            """SELECT ecl.original_risk_level, ecl.downgrade_reason
+               FROM evidence_claim_links ecl WHERE ecl.claim_id = ?""",
+            (claim["id"],),
+        )
+        link = await cursor.fetchone()
+        if link:
+            claim["original_risk_level"] = link["original_risk_level"]
+            claim["downgrade_note"] = link["downgrade_reason"]
+    return claims
 
 
 @router.get("/{scan_id}", response_model=Report)
@@ -60,7 +72,11 @@ async def get_report_pdf(
     exposure_summary = RiskCalculator().calculate_scan_exposure(
         claims, scan["annual_revenue_eur"]
     )
-    pdf_bytes = ReportBuilder().build_report(scan, claims, exposure_summary)
+    from app.services.scan_service import articles_for_claims
+    articles_by_rule = await articles_for_claims(db, claims)
+    pdf_bytes = ReportBuilder().build_report(
+        scan, claims, exposure_summary, articles_by_rule=articles_by_rule
+    )
 
     settings = get_settings()
     reports_dir = Path(settings.REPORTS_DIR)

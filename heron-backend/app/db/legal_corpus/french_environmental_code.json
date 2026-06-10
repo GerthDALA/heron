@@ -1,0 +1,58 @@
+{
+  "corpus": {
+    "id": "FR_ENV_CODE",
+    "short_name": "Code de l'environnement",
+    "full_name": "Code de l'environnement — Articles L. 541-9-1, L. 541-9-4-1 et R. 541-223",
+    "jurisdiction": "FR",
+    "law_type": "code",
+    "official_reference": "Code de l'environnement, Loi Climat et Résilience n°2021-1104 / Loi AGEC n°2020-105",
+    "publication_date": "2021-08-24",
+    "application_date": "2023-01-01",
+    "status": "active"
+  },
+  "articles": [
+    {
+      "id": "FR_EC_L541_9_1",
+      "article_ref": "Article L. 541-9-1",
+      "article_title": "Information consommateur — qualités et caractéristiques environnementales",
+      "full_text": "Les producteurs et les importateurs de produits générateurs de déchets informent les consommateurs, par voie de marquage, d'étiquetage, d'affichage ou par tout autre procédé approprié, sur leurs qualités et caractéristiques environnementales, notamment l'incorporation de matière recyclée, l'emploi de ressources renouvelables, la durabilité, la compostabilité, la réparabilité, les possibilités de réemploi, la recyclabilité et la présence de substances dangereuses, de métaux précieux ou de terres rares.",
+      "summary": "Oblige les producteurs à informer les consommateurs sur les qualités et caractéristiques environnementales des produits générateurs de déchets — fonde l'exigence de documentation des allégations.",
+      "applies_to": "product_claims",
+      "prohibited_behaviour": "Information environnementale absente, floue ou non documentée sur les produits générateurs de déchets",
+      "evidence_required": "Documentation technique sur les caractéristiques environnementales mentionnées",
+      "effective_from": "2023-01-01",
+      "verification_status": "pending_source",
+      "source_note": "Extrait du premier alinéa. À remplacer par le texte intégral consolidé Légifrance avant publication — validation juriste requise."
+    },
+    {
+      "id": "FR_EC_L541_9_4_1",
+      "article_ref": "Article L. 541-9-4-1",
+      "article_title": "Sanctions — manquement aux obligations d'information environnementale",
+      "full_text": "Tout manquement aux obligations d'information mentionnées à l'article L. 541-9-1 est passible d'une amende administrative dont le montant ne peut excéder 3 000 € pour une personne physique et 15 000 € pour une personne morale.\nCette amende est prononcée dans les conditions prévues au chapitre II du titre II du livre V du code de la consommation.",
+      "summary": "Amende administrative jusqu'à 3 000 EUR (personne physique) / 15 000 EUR (personne morale) par manquement aux obligations d'information environnementale de l'article L. 541-9-1.",
+      "applies_to": "product_claims",
+      "prohibited_behaviour": "Manquement aux obligations d'information de l'article L. 541-9-1",
+      "evidence_required": null,
+      "effective_from": "2023-01-01",
+      "verification_status": "verified_source",
+      "source_note": "Verbatim Légifrance LEGIARTI000043959912, version en vigueur depuis le 01/01/2023 (création LOI n°2021-1104 du 22 août 2021, art. 3).",
+      "penalties": {
+        "administrative_fine_natural_person_eur": 3000,
+        "administrative_fine_legal_entity_eur": 15000
+      }
+    },
+    {
+      "id": "FR_EC_R541_223",
+      "article_ref": "Article R. 541-223",
+      "article_title": "Interdictions — mentions sur emballages et produits",
+      "full_text": "Il est interdit de faire figurer sur un produit ou un emballage, neuf à destination du consommateur, les mentions « biodégradable », « respectueux de l'environnement » ou toute autre mention équivalente.",
+      "summary": "Blacklist française active depuis 2022 : interdit explicitement « biodégradable », « respectueux de l'environnement » et toute mention équivalente sur les produits et emballages neufs à destination du consommateur.",
+      "applies_to": "product_claims",
+      "prohibited_behaviour": "Usage de « biodégradable », « respectueux de l'environnement » ou équivalents sur produits et emballages",
+      "evidence_required": "Ces mentions sont interdites en toutes circonstances sur produits et emballages — elles doivent être supprimées",
+      "effective_from": "2022-01-01",
+      "verification_status": "pending_source",
+      "source_note": "Issu du décret n°2021-1431 (application de l'art. 13 loi AGEC). À vérifier contre le texte consolidé Légifrance avant publication — validation juriste requise."
+    }
+  ]
+}

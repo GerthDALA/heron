@@ -1,0 +1,95 @@
+{
+  "corpus": {
+    "id": "EMPCO_2024_825",
+    "short_name": "EmpCo Directive",
+    "full_name": "Directive (EU) 2024/825 of the European Parliament and of the Council of 28 February 2024 amending Directives 2005/29/EC and 2011/83/EU as regards empowering consumers for the green transition through better protection against unfair practices and through better information",
+    "jurisdiction": "EU",
+    "law_type": "directive",
+    "official_reference": "OJ L, 2024/825, 6.3.2024",
+    "eli": "http://data.europa.eu/eli/dir/2024/825/oj",
+    "publication_date": "2024-03-06",
+    "application_date": "2026-09-27",
+    "transposition_deadline": "2026-03-27",
+    "status": "active"
+  },
+  "articles": [
+    {
+      "id": "EMPCO_2024_825_ANNEX_2A",
+      "article_ref": "Annexe I, Point 2a",
+      "article_title": "Sustainability labels without certification",
+      "full_text": "Displaying a sustainability label that is not based on a certification scheme or not established by public authorities.",
+      "summary": "Prohibited to display sustainability labels unless they come from a certified scheme or public authority.",
+      "applies_to": "all",
+      "prohibited_behaviour": "Using self-created sustainability labels or unverified trust marks",
+      "evidence_required": "Valid certification scheme within the meaning of Article 2(r) of Directive 2005/29/EC, or label established by public authorities",
+      "effective_from": "2026-09-27",
+      "verification_status": "verified_source",
+      "source_note": "Verbatim from OJ L, 2024/825, 6.3.2024, Annex, point (1) (new Annex I point 2a of Directive 2005/29/EC)."
+    },
+    {
+      "id": "EMPCO_2024_825_ANNEX_4A",
+      "article_ref": "Annexe I, Point 4a",
+      "article_title": "Generic environmental claims",
+      "full_text": "Making a generic environmental claim for which the trader is not able to demonstrate recognised excellent environmental performance relevant to the claim.",
+      "summary": "Vague environmental claims like 'eco-friendly', 'green', 'natural', 'sustainable' are prohibited unless backed by a recognised EU Ecolabel or EN ISO 14024 Type I scheme.",
+      "applies_to": "all",
+      "prohibited_behaviour": "Generic environmental claims without substantiation of recognised excellent environmental performance",
+      "evidence_required": "EU Ecolabel (Regulation EC 66/2010) or EN ISO 14024 Type I national ecolabelling scheme officially recognised in the Member State, or top environmental performance in accordance with other applicable Union law",
+      "effective_from": "2026-09-27",
+      "verification_status": "verified_source",
+      "source_note": "Verbatim from OJ L, 2024/825, 6.3.2024, Annex, point (2) (new Annex I point 4a of Directive 2005/29/EC)."
+    },
+    {
+      "id": "EMPCO_2024_825_ANNEX_4B",
+      "article_ref": "Annexe I, Point 4b",
+      "article_title": "Single-aspect claims presented as whole-product claims",
+      "full_text": "Making an environmental claim about the entire product or the trader's entire business when it concerns only a certain aspect of the product or a specific activity of the trader's business.",
+      "summary": "Prohibited to claim an entire product or brand is sustainable when only one component or activity has an environmental benefit.",
+      "applies_to": "all",
+      "prohibited_behaviour": "Claiming entire product is green when only packaging, one ingredient, or one process qualifies",
+      "evidence_required": "Claim must be scoped to the specific aspect: 'packaging made from 100% recycled material' not 'sustainable product'",
+      "effective_from": "2026-09-27",
+      "verification_status": "verified_source",
+      "source_note": "Verbatim from OJ L, 2024/825, 6.3.2024, Annex, point (2) (new Annex I point 4b of Directive 2005/29/EC)."
+    },
+    {
+      "id": "EMPCO_2024_825_ANNEX_4C",
+      "article_ref": "Annexe I, Point 4c",
+      "article_title": "Offset-based climate neutrality claims",
+      "full_text": "Claiming, based on the offsetting of greenhouse gas emissions, that a product has a neutral, reduced or positive impact on the environment in terms of greenhouse gas emissions.",
+      "summary": "Product-level claims of carbon neutrality, CO2 neutrality, or climate positivity based on external carbon offset purchases are prohibited. Only actual lifecycle reductions within the value chain qualify.",
+      "applies_to": "product_claims",
+      "prohibited_behaviour": "Carbon neutral, CO2 neutral, climate positive, climate compensated, net zero claims based on offset credits",
+      "evidence_required": "Verified lifecycle assessment showing actual emissions reductions within the product's own value chain — not external offsets",
+      "effective_from": "2026-09-27",
+      "verification_status": "verified_source",
+      "source_note": "Verbatim from OJ L, 2024/825, 6.3.2024, Annex, point (2) (new Annex I point 4c of Directive 2005/29/EC)."
+    },
+    {
+      "id": "EMPCO_2024_825_ANNEX_10A",
+      "article_ref": "Annexe I, Point 10a",
+      "article_title": "Legal minimum presented as distinctive feature",
+      "full_text": "Presenting requirements imposed by law on all products within the relevant product category on the Union market as a distinctive feature of the trader's offer.",
+      "summary": "Prohibited to advertise a legal minimum requirement as a special environmental benefit (e.g. 'contains no banned substance X' when X is banned for all products).",
+      "applies_to": "all",
+      "prohibited_behaviour": "Marketing a legal baseline requirement as a voluntary environmental achievement",
+      "evidence_required": "None — these claims must simply be removed",
+      "effective_from": "2026-09-27",
+      "verification_status": "verified_source",
+      "source_note": "Verbatim from OJ L, 2024/825, 6.3.2024, Annex, point (3) (new Annex I point 10a of Directive 2005/29/EC)."
+    },
+    {
+      "id": "EMPCO_2024_825_ART_6_2D",
+      "article_ref": "Article 6(2), point (d)",
+      "article_title": "Unverified future environmental claims",
+      "full_text": "making an environmental claim related to future environmental performance without clear, objective, publicly available and verifiable commitments set out in a detailed and realistic implementation plan that includes measurable and time-bound targets and other relevant elements necessary to support its implementation, such as allocation of resources, and that is regularly verified by an independent third party expert, whose findings are made available to consumers;",
+      "summary": "Future climate claims ('carbon neutral by 2030') require a publicly available, independently verified, time-bound implementation plan with measurable targets.",
+      "applies_to": "all",
+      "prohibited_behaviour": "Forward-looking climate claims without independently verified, publicly available implementation roadmap",
+      "evidence_required": "Independent third-party verification of implementation plan with measurable milestones, publicly available to consumers",
+      "effective_from": "2026-09-27",
+      "verification_status": "verified_source",
+      "source_note": "Verbatim from OJ L, 2024/825, 6.3.2024, Article 1, point (2)(b) (new Article 6(2)(d) of Directive 2005/29/EC)."
+    }
+  ]
+}

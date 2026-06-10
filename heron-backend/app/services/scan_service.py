@@ -15,6 +15,8 @@ import aiosqlite
 from app.config import get_settings
 from app.database import _connect, load_rules
 from app.engine import crawler
+from app.engine.corpus_loader import CorpusLoader
+from app.engine.evidence_verifier import EvidenceVerifier
 from app.engine.regex_engine import RegexEngine
 from app.engine.replacement_generator import ReplacementGenerator
 from app.engine.report_builder import ReportBuilder
@@ -28,45 +30,30 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-async def _evidence_keywords(db: aiosqlite.Connection, user_id: str | None) -> list[str]:
-    if not user_id:
-        return []
-    cursor = await db.execute(
-        "SELECT covers_claims FROM evidence_records WHERE user_id = ?", (user_id,)
-    )
-    rows = await cursor.fetchall()
-    keywords: list[str] = []
-    for row in rows:
-        keywords += [k.strip().lower() for k in row["covers_claims"].split(",") if k.strip()]
-    return keywords
-
-
-def _evidence_covers(match: dict, keywords: list[str]) -> bool:
-    matched = match["matched_text"].lower()
-    return any(keyword and keyword in matched for keyword in keywords)
-
-
 async def persist_claims(
     db: aiosqlite.Connection,
-    scan_id: str,
     matches: list[dict],
     annual_revenue_eur: float,
-    evidence_keywords: list[str] | None = None,
+    scan_id: str | None = None,
+    ads_scan_id: str | None = None,
     freemium_visible: int = 0,
 ) -> list[dict]:
-    """Insert claim rows for each match, with exposure calculated per claim."""
+    """Insert claim rows for each match, with exposure calculated per claim.
+
+    Exactly one of scan_id / ads_scan_id must be set.
+    """
+    if bool(scan_id) == bool(ads_scan_id):
+        raise ValueError("Exactly one of scan_id or ads_scan_id must be set")
     calculator = RiskCalculator()
-    evidence_keywords = evidence_keywords or []
     claims: list[dict] = []
     for index, match in enumerate(matches):
-        has_evidence = _evidence_covers(match, evidence_keywords)
-        risk_level = "low" if has_evidence else match["risk_level"]
-        exposure = calculator.calculate_claim_exposure(
-            annual_revenue_eur, risk_level, has_evidence=has_evidence
+        exposure = match.get("exposure_eur") or calculator.calculate_claim_exposure(
+            annual_revenue_eur, match["risk_level"]
         )
         claim = {
             "id": str(uuid.uuid4()),
             "scan_id": scan_id,
+            "ads_scan_id": ads_scan_id,
             "rule_id": match["rule_id"],
             "page_url": match["page_url"],
             "original_text": match["matched_text"],
@@ -74,7 +61,7 @@ async def persist_claims(
             "matched_pattern": match["matched_pattern"],
             "empco_article": match["empco_article"],
             "empco_article_full_ref": match["empco_article_full_ref"],
-            "risk_level": risk_level,
+            "risk_level": match["risk_level"],
             "exposure_eur": exposure,
             "safe_template": match["safe_template"],
             "replacement_text": None,
@@ -83,21 +70,32 @@ async def persist_claims(
         }
         await db.execute(
             """INSERT INTO claims
-               (id, scan_id, rule_id, page_url, original_text, matched_pattern,
-                empco_article, empco_article_full_ref, risk_level, exposure_eur,
-                replacement_text, replacement_generated, is_visible_freemium, created_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 0, ?, ?)""",
+               (id, scan_id, ads_scan_id, rule_id, page_url, original_text,
+                matched_pattern, empco_article, empco_article_full_ref,
+                risk_level, exposure_eur, replacement_text,
+                replacement_generated, is_visible_freemium, created_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 0, ?, ?)""",
             (
-                claim["id"], scan_id, claim["rule_id"], claim["page_url"],
-                claim["original_text"], claim["matched_pattern"],
-                claim["empco_article"], claim["empco_article_full_ref"],
-                claim["risk_level"], claim["exposure_eur"],
-                claim["is_visible_freemium"], claim["created_at"],
+                claim["id"], scan_id, ads_scan_id, claim["rule_id"],
+                claim["page_url"], claim["original_text"],
+                claim["matched_pattern"], claim["empco_article"],
+                claim["empco_article_full_ref"], claim["risk_level"],
+                claim["exposure_eur"], claim["is_visible_freemium"],
+                claim["created_at"],
             ),
         )
         claims.append(claim)
     await db.commit()
     return claims
+
+
+async def articles_for_claims(db: aiosqlite.Connection, claims: list[dict]) -> dict[str, list[dict]]:
+    """Map rule_id -> linked corpus articles, for report citations."""
+    loader = CorpusLoader()
+    result: dict[str, list[dict]] = {}
+    for rule_id in {c["rule_id"] for c in claims}:
+        result[rule_id] = await loader.get_articles_for_rule(rule_id, db)
+    return result
 
 
 async def run_full_scan(scan_id: str, db: aiosqlite.Connection | None = None) -> None:
@@ -133,10 +131,12 @@ async def run_full_scan(scan_id: str, db: aiosqlite.Connection | None = None) ->
         await db.commit()
 
         matches = engine.match_all_pages(pages)
-        evidence_keywords = await _evidence_keywords(db, scan["user_id"])
         claims = await persist_claims(
-            db, scan_id, matches, scan["annual_revenue_eur"], evidence_keywords
+            db, matches, scan["annual_revenue_eur"], scan_id=scan_id
         )
+
+        # Evidence downgrade: valid certificates reduce covered claims to 'low'
+        claims = await EvidenceVerifier().apply_downgrades(claims, scan["user_id"], db)
 
         brand_context = {
             "domain": scan["domain"],
@@ -178,7 +178,10 @@ async def run_full_scan(scan_id: str, db: aiosqlite.Connection | None = None) ->
         exposure_summary = calculator.calculate_scan_exposure(
             claims, scan["annual_revenue_eur"]
         )
-        pdf_bytes = ReportBuilder().build_report(scan, claims, exposure_summary)
+        articles_by_rule = await articles_for_claims(db, claims)
+        pdf_bytes = ReportBuilder().build_report(
+            scan, claims, exposure_summary, articles_by_rule=articles_by_rule
+        )
         reports_dir = Path(settings.REPORTS_DIR)
         reports_dir.mkdir(parents=True, exist_ok=True)
         pdf_path = reports_dir / f"{scan_id}.pdf"
@@ -227,7 +230,7 @@ async def run_freemium_scan(
     matches = engine.match_all_pages([page])
 
     claims = await persist_claims(
-        db, scan_id, matches, annual_revenue_eur,
+        db, matches, annual_revenue_eur, scan_id=scan_id,
         freemium_visible=settings.FREEMIUM_MAX_CLAIMS_VISIBLE,
     )
     total_exposure = round(sum(c["exposure_eur"] for c in claims), 2)

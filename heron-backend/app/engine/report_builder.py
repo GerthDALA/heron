@@ -68,7 +68,14 @@ class ReportBuilder:
                                    fontSize=11),
         }
 
-    def build_report(self, scan: dict, claims: list[dict], exposure_summary: dict) -> bytes:
+    def build_report(
+        self,
+        scan: dict,
+        claims: list[dict],
+        exposure_summary: dict,
+        articles_by_rule: dict[str, list[dict]] | None = None,
+        report_kind: str = "domain",
+    ) -> bytes:
         buffer = BytesIO()
         doc = SimpleDocTemplate(
             buffer,
@@ -80,20 +87,26 @@ class ReportBuilder:
             title=f"Heron — Rapport EmpCo — {scan['domain']}",
         )
         story = []
-        story += self._cover_page(scan, claims)
+        story += self._cover_page(scan, claims, report_kind)
         story += self._executive_summary(scan, claims, exposure_summary)
-        story += self._claims_detail(claims)
+        story += self._evidence_section(claims)
+        story += self._claims_detail(claims, articles_by_rule or {})
         story += self._disclaimer_page()
         doc.build(story)
         return buffer.getvalue()
 
     # Page 1 — cover
-    def _cover_page(self, scan: dict, claims: list[dict]) -> list:
+    def _cover_page(self, scan: dict, claims: list[dict], report_kind: str = "domain") -> list:
         scanned_at = scan.get("created_at") or datetime.now(timezone.utc).isoformat()
+        heading = (
+            "Rapport Heron — Vérification de copy publicitaire"
+            if report_kind == "ads" else scan["domain"]
+        )
         return [
             Spacer(1, 3 * cm),
             Paragraph("Heron", self.styles["logo"]),
-            Paragraph(scan["domain"], self.styles["domain"]),
+            Paragraph(heading, self.styles["domain"]),
+            *( [Paragraph(scan["domain"], self.styles["bold"])] if report_kind == "ads" else [] ),
             Paragraph(f"Date et heure du scan : {scanned_at}", self.styles["body"]),
             Spacer(1, 1 * cm),
             Paragraph(f"Allégations identifiées : {len(claims)}", self.styles["bold"]),
@@ -154,8 +167,28 @@ class ReportBuilder:
         story.append(PageBreak())
         return story
 
+    # Section — evidence downgrades (only when certificates were applied)
+    def _evidence_section(self, claims: list[dict]) -> list:
+        downgraded = [c for c in claims if c.get("downgrade_note")]
+        if not downgraded:
+            return []
+        story = [Paragraph("Certificats et réductions de risque", self.styles["h1"]),
+                 Spacer(1, 0.4 * cm)]
+        for claim in downgraded:
+            story.append(Paragraph(
+                f"« {claim['original_text']} » — "
+                f"<font color='#A32D2D'>{claim.get('original_risk_level', 'high')}</font> → "
+                f"<font color='#3B6D11'>{claim['risk_level']}</font> — "
+                f"nouvelle exposition : {_eur(claim.get('exposure_eur', 0))}",
+                self.styles["body"],
+            ))
+            story.append(Paragraph(claim["downgrade_note"], self.styles["legal"]))
+            story.append(Spacer(1, 0.3 * cm))
+        story.append(PageBreak())
+        return story
+
     # Pages 3+ — one section per claim, highest exposure first
-    def _claims_detail(self, claims: list[dict]) -> list:
+    def _claims_detail(self, claims: list[dict], articles_by_rule: dict[str, list[dict]]) -> list:
         story = [Paragraph("Détail des allégations", self.styles["h1"]), Spacer(1, 0.4 * cm)]
         ordered = sorted(claims, key=lambda c: c.get("exposure_eur", 0), reverse=True)
         for i, claim in enumerate(ordered, 1):
@@ -169,6 +202,8 @@ class ReportBuilder:
                 f"<b>Exposition maximale : {_eur(claim.get('exposure_eur', 0))}</b>",
                 self.styles["bold"],
             ))
+            if claim.get("downgrade_note"):
+                story.append(Paragraph(claim["downgrade_note"], self.styles["replacement"]))
             replacement = claim.get("replacement_text")
             if replacement:
                 story.append(Spacer(1, 0.2 * cm))
@@ -178,6 +213,15 @@ class ReportBuilder:
                 "Remplacement proposé sur la base du texte EmpCo. Votre juriste valide avant publication.",
                 self.styles["legal"],
             ))
+            # Legal source block: verbatim statutory text from the embedded corpus
+            for article in articles_by_rule.get(claim["rule_id"], []):
+                excerpt = article["full_text"][:200]
+                suffix = "..." if len(article["full_text"]) > 200 else ""
+                story.append(Paragraph(
+                    f"Source légale : {article['article_ref']} — {article.get('corpus_full_name', article['corpus_id'])}<br/>"
+                    f'Texte statutaire : "{excerpt}{suffix}"',
+                    self.styles["legal"],
+                ))
             story.append(Spacer(1, 0.6 * cm))
         story.append(PageBreak())
         return story

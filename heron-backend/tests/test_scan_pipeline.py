@@ -87,9 +87,9 @@ def test_full_scan_pipeline(initialized_db, fake_crawler):
     assert scan["total_exposure_eur"] == round(sum(c["exposure_eur"] for c in claims), 2)
 
     articles = {c["empco_article"] for c in claims}
-    assert "Article 4a" in articles
-    assert "Article 4d" in articles
-    assert "Article 4c" in articles
+    assert "Annexe I, Point 4a" in articles
+    assert "Annexe I, Point 4c" in articles  # offset-based carbon claims
+    assert "Annexe I, Point 4b" in articles  # single-aspect superlatives
 
     # high 4a claim on 2M revenue = 200,000 EUR
     high = [c for c in claims if c["risk_level"] == "high"]

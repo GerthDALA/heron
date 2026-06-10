@@ -41,14 +41,18 @@ def test_db_path(tmp_path, monkeypatch):
 
 
 @pytest.fixture
-def initialized_db(test_db_path):
-    """Initialise schema + seed rules in the test database."""
-    from app.database import _connect, init_db, seed_rules
+def initialized_db(test_db_path, monkeypatch, tmp_path):
+    """Initialise schema + seed corpus, certifications and rules."""
+    monkeypatch.setenv("EVIDENCE_STORAGE_PATH", str(tmp_path / "evidence"))
+    from app.config import get_settings
+    get_settings.cache_clear()
+    from app.database import _connect, init_db, seed_corpus, seed_rules
 
     async def setup():
         await init_db(test_db_path)
         db = await _connect(test_db_path)
         try:
+            await seed_corpus(db)  # corpus first: rule_article_links FK
             await seed_rules(db)
         finally:
             await db.close()

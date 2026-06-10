@@ -1,0 +1,79 @@
+[
+  {
+    "id": "COSMOS",
+    "name": "COSMOS Organic / COSMOS Natural",
+    "issuer": "Ecocert, BDIH, Cosmebio, ICEA, Soil Association",
+    "jurisdiction": "INTL",
+    "covers_article": "EMPCO_2024_825_ANNEX_4A",
+    "covers_claim_patterns": "bio,biologique,organique,organic,naturel,natural,cosmos",
+    "iso_standard": "ISO 16128",
+    "verification_url": "https://cosmos-standard.org/certified-products/",
+    "description": "Certifie les ingrédients organiques/naturels en cosmétique. Satisfait l'Annexe I, Point 4a EmpCo pour les allégations 'biologique', 'organique', 'naturel' dans le scope certifié."
+  },
+  {
+    "id": "EU_ECOLABEL",
+    "name": "EU Ecolabel",
+    "issuer": "European Commission",
+    "jurisdiction": "EU",
+    "covers_article": "EMPCO_2024_825_ANNEX_4A",
+    "covers_claim_patterns": "eco,ecological,environmentally friendly,ecolabel,respectueux,eco-friendly",
+    "iso_standard": "EN ISO 14024",
+    "verification_url": "https://ec.europa.eu/ecat/",
+    "description": "Label écologique officiel UE. Démontre la 'performance environnementale excellente reconnue' au sens de l'Annexe I, Point 4a EmpCo."
+  },
+  {
+    "id": "GOTS",
+    "name": "Global Organic Textile Standard",
+    "issuer": "Global Standard gGmbH",
+    "jurisdiction": "INTL",
+    "covers_article": "EMPCO_2024_825_ANNEX_4A",
+    "covers_claim_patterns": "coton biologique,organic cotton,bio cotton,textile organique,organic textile",
+    "iso_standard": null,
+    "verification_url": "https://www.global-standard.org/certification/certified-facilities",
+    "description": "Certifie les textiles organiques avec ségrégation physique en chaîne d'approvisionnement. Satisfait l'Annexe I, Point 4a pour 'coton biologique', 'organic cotton'."
+  },
+  {
+    "id": "GRS",
+    "name": "Global Recycled Standard",
+    "issuer": "Textile Exchange",
+    "jurisdiction": "INTL",
+    "covers_article": "EMPCO_2024_825_ANNEX_4A",
+    "covers_claim_patterns": "recycled,recyclé,matière recyclée,recycled polyester,polyester recyclé",
+    "iso_standard": null,
+    "verification_url": "https://textileexchange.org/grs/",
+    "description": "Certifie les matières recyclées avec chaîne de traçabilité. Satisfait l'Annexe I, Point 4a pour les allégations 'recyclé', 'matière recyclée'."
+  },
+  {
+    "id": "FSC",
+    "name": "Forest Stewardship Council",
+    "issuer": "FSC International",
+    "jurisdiction": "INTL",
+    "covers_article": "EMPCO_2024_825_ANNEX_4A",
+    "covers_claim_patterns": "fsc,bois certifié,certified wood,forêt gérée durablement,sustainably sourced wood",
+    "iso_standard": null,
+    "verification_url": "https://info.fsc.org/certificate.html",
+    "description": "Certifie la gestion durable des forêts. Satisfait l'Annexe I, Point 4a pour les allégations relatives au bois ou papier."
+  },
+  {
+    "id": "ISO14024",
+    "name": "EN ISO 14024 Type I Ecolabel",
+    "issuer": "National ecolabelling bodies (NF Environnement, Blauer Engel, etc.)",
+    "jurisdiction": "EU",
+    "covers_article": "EMPCO_2024_825_ANNEX_4A",
+    "covers_claim_patterns": "eco,ecological,environmentally friendly,ecolabel",
+    "iso_standard": "ISO 14024",
+    "verification_url": null,
+    "description": "Labels Type I reconnus officiellement dans les États membres. Satisfait la définition de 'performance environnementale excellente reconnue' de l'Annexe I, Point 4a."
+  },
+  {
+    "id": "ECOCERT",
+    "name": "Ecocert Organic / Natural",
+    "issuer": "Ecocert",
+    "jurisdiction": "INTL",
+    "covers_article": "EMPCO_2024_825_ANNEX_4A",
+    "covers_claim_patterns": "bio,biologique,organique,organic,naturel,natural,ecocert",
+    "iso_standard": "ISO 16128",
+    "verification_url": "https://www.ecocert.com/en/our-standards",
+    "description": "Certification Ecocert pour ingrédients naturels et biologiques. Couverture similaire à COSMOS pour les allégations cosmétiques."
+  }
+]

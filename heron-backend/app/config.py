@@ -26,6 +26,11 @@ class Settings(BaseSettings):
     HERON_FROM_EMAIL: str = "heron@yourdomain.com"
     FRONTEND_URL: str = "http://localhost:3000"
     REPORTS_DIR: str = "./reports"
+    EVIDENCE_UPLOAD_MAX_MB: int = 10
+    EVIDENCE_STORAGE_PATH: str = "./evidence"
+    ADS_SCAN_MAX_CHARS: int = 50000
+    ADS_SCAN_MIN_CHARS: int = 10
+    CORPUS_AUTO_RELOAD: bool = True  # reload corpus on startup if files changed
 
     @property
     def sqlite_path(self) -> str:

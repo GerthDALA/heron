@@ -1,0 +1,24 @@
+{
+  "version": "1.1",
+  "last_updated": "2026-06-10",
+  "corpora": [
+    {
+      "id": "EMPCO_2024_825",
+      "file": "empco_2024_825.json",
+      "status": "active",
+      "priority": 1
+    },
+    {
+      "id": "FR_CONSUMER_CODE",
+      "file": "french_consumer_code.json",
+      "status": "active",
+      "priority": 2
+    },
+    {
+      "id": "FR_ENV_CODE",
+      "file": "french_environmental_code.json",
+      "status": "active",
+      "priority": 3
+    }
+  ]
+}

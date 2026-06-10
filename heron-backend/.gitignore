@@ -6,3 +6,4 @@ heron.db
 reports/*.pdf
 .pytest_cache/
 nohup.out
+evidence/
