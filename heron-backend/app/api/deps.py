@@ -4,6 +4,7 @@ import aiosqlite
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
+from app.config import get_settings
 from app.database import get_db
 from app.services import auth_service
 
@@ -26,6 +27,13 @@ async def get_current_user(
     user = await auth_service.get_user_by_id(db, payload["sub"])
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+    return user
+
+
+async def get_admin_user(user: dict = Depends(get_current_user)) -> dict:
+    """Admin gate: the authenticated user's email must be in ADMIN_EMAILS."""
+    if user["email"] not in get_settings().ADMIN_EMAILS:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
     return user
 
 

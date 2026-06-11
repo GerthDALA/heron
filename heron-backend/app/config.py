@@ -35,6 +35,8 @@ class Settings(BaseSettings):
     # for local development against a mock storefront.
     CRAWLER_ALLOW_PRIVATE_HOSTS: bool = False
     CERT_EXPIRY_CHECK_HOURS: int = 24
+    # Users whose email is listed here get access to /admin endpoints.
+    ADMIN_EMAILS: list[str] = []
 
     @property
     def sqlite_path(self) -> str:

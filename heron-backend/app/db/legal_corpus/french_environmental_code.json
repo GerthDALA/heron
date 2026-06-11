@@ -45,14 +45,14 @@
       "id": "FR_EC_R541_223",
       "article_ref": "Article R. 541-223",
       "article_title": "Interdictions — mentions sur emballages et produits",
-      "full_text": "Il est interdit de faire figurer sur un produit ou un emballage, neuf à destination du consommateur, les mentions « biodégradable », « respectueux de l'environnement » ou toute autre mention équivalente.",
-      "summary": "Blacklist française active depuis 2022 : interdit explicitement « biodégradable », « respectueux de l'environnement » et toute mention équivalente sur les produits et emballages neufs à destination du consommateur.",
+      "full_text": "Il est interdit de faire figurer sur un produit ou un emballage, neuf à destination du consommateur, les mentions “ biodégradable ”, “ respectueux de l'environnement ” ou toute autre allégation environnementale équivalente.",
+      "summary": "Blacklist française active depuis le 1er mai 2022 (écoulement des stocks jusqu'au 1er janvier 2023) : interdit explicitement « biodégradable », « respectueux de l'environnement » et toute autre allégation environnementale équivalente sur les produits et emballages neufs à destination du consommateur.",
       "applies_to": "product_claims",
-      "prohibited_behaviour": "Usage de « biodégradable », « respectueux de l'environnement » ou équivalents sur produits et emballages",
+      "prohibited_behaviour": "Usage de « biodégradable », « respectueux de l'environnement » ou toute autre allégation environnementale équivalente sur produits et emballages",
       "evidence_required": "Ces mentions sont interdites en toutes circonstances sur produits et emballages — elles doivent être supprimées",
-      "effective_from": "2022-01-01",
-      "verification_status": "pending_source",
-      "source_note": "Issu du décret n°2021-1431 (application de l'art. 13 loi AGEC). À vérifier contre le texte consolidé Légifrance avant publication — validation juriste requise."
+      "effective_from": "2022-05-01",
+      "verification_status": "verified_source",
+      "source_note": "Verbatim Décret n°2022-748 du 29 avril 2022, art. 1er (JORF n°0101 du 30 avril 2022, texte n°4, JORFTEXT000045726094, ELI https://www.legifrance.gouv.fr/eli/decret/2022/4/29/2022-748/jo/texte). Entrée en vigueur au lendemain de la publication ; écoulement des stocks jusqu'au 01/01/2023."
     }
   ]
 }

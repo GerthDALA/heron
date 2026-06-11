@@ -62,6 +62,19 @@ def initialized_db(test_db_path, monkeypatch, tmp_path):
 
 
 @pytest.fixture
+def fake_homepage(monkeypatch):
+    async def fake_crawl_homepage(domain):
+        return {
+            "url": "https://marque.fr",
+            "title": "Marque",
+            "body_text": "Formule eco-responsable et naturelle. Carbon neutral by 2030.",
+        }
+
+    from app.engine import crawler
+    monkeypatch.setattr(crawler, "crawl_homepage", fake_crawl_homepage)
+
+
+@pytest.fixture
 def client(initialized_db):
     """Synchronous test client against the full app (test DB already seeded)."""
     from fastapi.testclient import TestClient

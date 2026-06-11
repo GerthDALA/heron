@@ -60,6 +60,33 @@ def test_l132_2_turnover_percentage(corpus_files):
     assert penalties["natural_person"]["online_fine_eur"] == 750000
 
 
+def test_l121_2_full_text_verified(corpus_files):
+    articles = {a["id"]: a for a in corpus_files["files"]["FR_CONSUMER_CODE"]["articles"]}
+    article = articles["FR_CC_L121_2"]
+    assert article["verification_status"] == "verified_source"
+    assert "notamment son impact environnemental" in article["full_text"]
+    assert "La portée des engagements de l'annonceur, notamment en matière environnementale" in article["full_text"]
+
+
+def test_r541_223_full_text_verified(corpus_files):
+    articles = {a["id"]: a for a in corpus_files["files"]["FR_ENV_CODE"]["articles"]}
+    article = articles["FR_EC_R541_223"]
+    assert article["verification_status"] == "verified_source"
+    # Décret 2022-748 wording: 'allégation environnementale équivalente'
+    assert "toute autre allégation environnementale équivalente" in article["full_text"]
+    assert "biodégradable" in article["full_text"]
+
+
+def test_only_l541_9_1_remains_pending(corpus_files):
+    pending = [
+        a["id"]
+        for data in corpus_files["files"].values()
+        for a in data["articles"]
+        if a.get("verification_status") != "verified_source"
+    ]
+    assert pending == ["FR_EC_L541_9_1"]
+
+
 def test_l132_2_full_text_matches_legifrance(corpus_files):
     articles = {a["id"]: a for a in corpus_files["files"]["FR_CONSUMER_CODE"]["articles"]}
     text = articles["FR_CC_L132_2"]["full_text"]

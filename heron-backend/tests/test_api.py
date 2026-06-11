@@ -3,19 +3,6 @@
 import pytest
 
 
-@pytest.fixture
-def fake_homepage(monkeypatch):
-    async def fake_crawl_homepage(domain):
-        return {
-            "url": "https://marque.fr",
-            "title": "Marque",
-            "body_text": "Formule eco-responsable et naturelle. Carbon neutral by 2030.",
-        }
-
-    from app.engine import crawler
-    monkeypatch.setattr(crawler, "crawl_homepage", fake_crawl_homepage)
-
-
 def register(client, email="user@test.fr", password="motdepasse123"):
     response = client.post("/api/v1/auth/register", json={"email": email, "password": password})
     assert response.status_code == 201, response.text

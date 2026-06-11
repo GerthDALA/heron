@@ -10,7 +10,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.database import _connect, check_corpus_updates, init_db, seed_corpus, seed_rules
-from app.api.routes import ads, auth, billing, corpus, evidence, freemium, health, report, scan
+from app.api.routes import (
+    admin, ads, auth, billing, corpus, evidence, freemium, health, report, scan,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("heron")
@@ -68,7 +70,7 @@ def create_app() -> FastAPI:
     )
     for router in (health.router, auth.router, scan.router, freemium.router,
                    report.router, billing.router, corpus.router,
-                   evidence.router, ads.router):
+                   evidence.router, ads.router, admin.router):
         app.include_router(router, prefix="/api/v1")
     return app
 
