@@ -24,6 +24,10 @@ async def _connect(path: str | None = None) -> aiosqlite.Connection:
     db = await aiosqlite.connect(path or _db_path())
     db.row_factory = aiosqlite.Row
     await db.execute("PRAGMA foreign_keys = ON")
+    # WAL lets readers proceed while a background scan writes; the busy
+    # timeout makes concurrent writers wait instead of failing fast.
+    await db.execute("PRAGMA journal_mode = WAL")
+    await db.execute("PRAGMA busy_timeout = 5000")
     return db
 
 
