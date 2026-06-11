@@ -121,5 +121,3 @@ claims must match, documented compliant phrasings must not.
 - **Single long-lived JWT** (7 days); no refresh-token rotation.
 - The stealth crawler does not honour `robots.txt` — a deliberate product
   decision to confirm before launch.
-- `L. 541-9-1` corpus entry is `pending_source` until the verbatim
-  Légifrance text is supplied.

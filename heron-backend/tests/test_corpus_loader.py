@@ -77,14 +77,24 @@ def test_r541_223_full_text_verified(corpus_files):
     assert "biodégradable" in article["full_text"]
 
 
-def test_only_l541_9_1_remains_pending(corpus_files):
+def test_all_articles_have_verified_sources(corpus_files):
     pending = [
         a["id"]
         for data in corpus_files["files"].values()
         for a in data["articles"]
         if a.get("verification_status") != "verified_source"
     ]
-    assert pending == ["FR_EC_L541_9_1"]
+    assert pending == [], f"Unverified statutory text: {pending}"
+
+
+def test_l541_9_1_full_text_verified(corpus_files):
+    articles = {a["id"]: a for a in corpus_files["files"]["FR_ENV_CODE"]["articles"]}
+    article = articles["FR_EC_L541_9_1"]
+    assert article["verification_status"] == "verified_source"
+    assert "Afin d'améliorer l'information des consommateurs" in article["full_text"]
+    # The legislative twin of R541-223 lives in this article
+    assert "biodégradable" in article["full_text"]
+    assert "toute autre mention équivalente" in article["full_text"]
 
 
 def test_l132_2_full_text_matches_legifrance(corpus_files):

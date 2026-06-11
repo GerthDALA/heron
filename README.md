@@ -81,8 +81,9 @@ cd heron-frontend && npm run build     # type-checks all routes
 |---|---|
 | Directive (EU) 2024/825 — Annex I pts 2a, 4a, 4b, 4c, 10a; Art. 6(2)(d) | ✅ verbatim, verified against OJ L 2024/825 |
 | Code de la consommation — L. 121-2, L. 132-2 | ✅ verbatim, verified against Légifrance |
-| Code de l'environnement — L. 541-9-4-1, R. 541-223 | ✅ verbatim, verified (Légifrance / Décret 2022-748) |
-| Code de l'environnement — L. 541-9-1 | ⚠️ `pending_source` — excluded from reports until the verbatim Légifrance text is supplied |
+| Code de l'environnement — L. 541-9-1, L. 541-9-4-1, R. 541-223 | ✅ verbatim, verified (Légifrance / Décret 2022-748) |
+
+**Every statutory text in the corpus is verified against its official source.**
 
 To add or update a law: drop a JSON file in
 `heron-backend/app/db/legal_corpus/`, reference it in `corpus_index.json`,

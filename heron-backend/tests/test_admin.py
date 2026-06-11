@@ -32,8 +32,8 @@ def test_admin_stats(admin_client):
     stats = response.json()
     assert stats["corpora"] == 3
     assert stats["legal_articles"] == 11
-    # After the L121-2 and R541-223 verifications, only L541-9-1 is pending
-    assert stats["articles_pending_source"] == 1
+    # Every corpus article is now verified against its official source
+    assert stats["articles_pending_source"] == 0
     assert "scans_by_status" in stats
 
 
