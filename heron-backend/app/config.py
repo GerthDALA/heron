@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     ADS_SCAN_MAX_CHARS: int = 50000
     ADS_SCAN_MIN_CHARS: int = 10
     CORPUS_AUTO_RELOAD: bool = True  # reload corpus on startup if files changed
+    # SSRF guard: refuse to crawl private/loopback hosts. Set to true only
+    # for local development against a mock storefront.
+    CRAWLER_ALLOW_PRIVATE_HOSTS: bool = False
+    CERT_EXPIRY_CHECK_HOURS: int = 24
 
     @property
     def sqlite_path(self) -> str:

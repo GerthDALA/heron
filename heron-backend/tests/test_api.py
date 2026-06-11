@@ -127,3 +127,89 @@ def test_billing_webhook_always_200(client):
     response = client.post("/api/v1/billing/webhook", content=b"{}",
                            headers={"Stripe-Signature": "bogus"})
     assert response.status_code == 200
+
+
+def test_checkout_completed_claims_freemium_scan(client, fake_homepage):
+    """After paying, the user must own the freemium scan they upgraded from."""
+    import asyncio
+
+    token = _freemium_owner_token = register(client, "buyer@test.fr")
+    freemium = client.post("/api/v1/freemium/scan", json={
+        "domain": "marque.fr", "annual_revenue_eur": 1000000, "email": "buyer@test.fr",
+    }).json()
+    scan_id = freemium["scan_id"]
+
+    # Before checkout: scan is unowned, access denied
+    assert client.get(f"/api/v1/scan/{scan_id}", headers=auth_headers(token)).status_code == 403
+
+    # Simulate the Stripe checkout.session.completed webhook handling
+    me = client.post("/api/v1/auth/login",
+                     json={"email": "buyer@test.fr", "password": "motdepasse123"})
+    from app.database import _connect
+    from app.services.billing_service import handle_checkout_completed
+    from app.services.auth_service import decode_token
+
+    user_id = decode_token(token)["sub"]
+    event = {"data": {"object": {
+        "customer": "cus_test123",
+        "metadata": {"user_id": user_id, "plan": "starter", "scan_id": scan_id},
+    }}}
+
+    async def run():
+        db = await _connect()
+        try:
+            return await handle_checkout_completed(db, event)
+        finally:
+            await db.close()
+
+    returned_scan_id = asyncio.run(run())
+    assert returned_scan_id == scan_id
+
+    # After checkout: scan is owned and accessible
+    response = client.get(f"/api/v1/scan/{scan_id}", headers=auth_headers(token))
+    assert response.status_code == 200
+
+
+def test_freemium_scan_refuses_private_host(client):
+    """SSRF guard: unauthenticated scans must not reach internal addresses."""
+    response = client.post("/api/v1/freemium/scan", json={
+        "domain": "127.0.0.1:8080",
+        "annual_revenue_eur": 1000000,
+        "email": "attacker@test.fr",
+    })
+    assert response.status_code == 422
+    assert "private" in response.json()["detail"].lower()
+
+
+def test_evidence_upload_list_download_roundtrip(client):
+    token = register(client, "certowner@test.fr")
+    pdf_bytes = b"%PDF-1.4 fake cosmos certificate"
+    upload = client.post(
+        "/api/v1/evidence",
+        data={
+            "cert_type_id": "COSMOS", "cert_number": "C-42",
+            "cert_holder": "Maison Test", "issuer_name": "Ecocert",
+            "issue_date": "2026-01-01", "valid_until": "2028-01-01",
+            "scope": "gamme soins",
+        },
+        files={"file": ("cert.pdf", pdf_bytes, "application/pdf")},
+        headers=auth_headers(token),
+    )
+    assert upload.status_code == 201, upload.text
+    evidence_id = upload.json()["evidence_id"]
+
+    listing = client.get("/api/v1/evidence", headers=auth_headers(token)).json()
+    assert listing["evidence"][0]["file_url"] == f"/api/v1/evidence/{evidence_id}/file"
+
+    download = client.get(f"/api/v1/evidence/{evidence_id}/file", headers=auth_headers(token))
+    assert download.status_code == 200
+    assert download.content == pdf_bytes
+
+    summary = client.get("/api/v1/evidence/summary", headers=auth_headers(token)).json()
+    assert summary["active_certs"] == 1
+    assert "EMPCO_2024_825_ANNEX_4A" in summary["covered_articles"]
+
+    # Another user cannot download it
+    other = register(client, "other@test.fr")
+    assert client.get(f"/api/v1/evidence/{evidence_id}/file",
+                      headers=auth_headers(other)).status_code == 404

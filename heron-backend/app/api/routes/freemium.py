@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime, timezone
 
 import aiosqlite
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.deps import get_db
 from app.config import get_settings
@@ -27,9 +27,14 @@ async def freemium_scan(
     )
     await db.commit()
 
-    claims = await scan_service.run_freemium_scan(
-        db, scan_id, body.domain, body.annual_revenue_eur
-    )
+    try:
+        claims = await scan_service.run_freemium_scan(
+            db, scan_id, body.domain, body.annual_revenue_eur
+        )
+    except ValueError as exc:  # SSRF guard refused the target
+        await db.execute("UPDATE scans SET status = 'error' WHERE id = ?", (scan_id,))
+        await db.commit()
+        raise HTTPException(status_code=422, detail=str(exc))
     total_exposure = round(sum(c["exposure_eur"] for c in claims), 2)
     visible = [c for c in claims if c["is_visible_freemium"]]
     redacted_count = len(claims) - len(visible)

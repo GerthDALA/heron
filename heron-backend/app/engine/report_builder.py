@@ -213,8 +213,12 @@ class ReportBuilder:
                 "Remplacement proposé sur la base du texte EmpCo. Votre juriste valide avant publication.",
                 self.styles["legal"],
             ))
-            # Legal source block: verbatim statutory text from the embedded corpus
+            # Legal source block: verbatim statutory text from the embedded
+            # corpus. Articles whose text is not yet verified against the
+            # official source are never reproduced in a report.
             for article in articles_by_rule.get(claim["rule_id"], []):
+                if article.get("verification_status") != "verified_source":
+                    continue
                 excerpt = article["full_text"][:200]
                 suffix = "..." if len(article["full_text"]) > 200 else ""
                 story.append(Paragraph(

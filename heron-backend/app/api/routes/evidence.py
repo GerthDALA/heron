@@ -2,6 +2,7 @@ from typing import Optional
 
 import aiosqlite
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi.responses import FileResponse
 
 from app.api.deps import get_current_user, get_db
 from app.services import evidence_service
@@ -16,6 +17,14 @@ async def list_certification_types(db: aiosqlite.Connection = Depends(get_db)):
         "verification_url FROM certification_types ORDER BY id"
     )
     return {"certification_types": [dict(row) for row in await cursor.fetchall()]}
+
+
+@router.get("/summary")
+async def evidence_summary(
+    user: dict = Depends(get_current_user),
+    db: aiosqlite.Connection = Depends(get_db),
+):
+    return await evidence_service.get_user_evidence_summary(user["id"], db)
 
 
 @router.post("", status_code=201)
@@ -88,6 +97,23 @@ async def list_evidence(
             for r in records
         ]
     }
+
+
+@router.get("/{evidence_id}/file")
+async def download_evidence_file(
+    evidence_id: str,
+    user: dict = Depends(get_current_user),
+    db: aiosqlite.Connection = Depends(get_db),
+):
+    cursor = await db.execute(
+        "SELECT file_path, file_original_name FROM evidence_records "
+        "WHERE id = ? AND user_id = ?",
+        (evidence_id, user["id"]),
+    )
+    row = await cursor.fetchone()
+    if row is None or not row["file_path"]:
+        raise HTTPException(status_code=404, detail="No file for this evidence record")
+    return FileResponse(row["file_path"], filename=row["file_original_name"] or "certificate")
 
 
 @router.delete("/{evidence_id}")

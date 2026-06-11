@@ -6,9 +6,11 @@ browser stack is unavailable — a failed page never crashes a scan.
 """
 
 import asyncio
+import ipaddress
 import logging
 import random
 import re
+import socket
 from urllib.parse import urljoin, urlparse
 
 logger = logging.getLogger("heron.crawler")
@@ -36,6 +38,37 @@ def normalise_domain(domain: str) -> str:
     if not domain.startswith(("http://", "https://")):
         domain = "https://" + domain
     return domain.rstrip("/")
+
+
+def is_private_host(url: str) -> bool:
+    """True if the URL's host resolves to a private/loopback/link-local IP."""
+    host = urlparse(url).hostname
+    if not host:
+        return True
+    try:
+        infos = socket.getaddrinfo(host, None)
+    except socket.gaierror:
+        return False  # unresolvable — let the crawl fail naturally
+    for info in infos:
+        try:
+            ip = ipaddress.ip_address(info[4][0])
+        except ValueError:
+            continue
+        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved:
+            return True
+    return False
+
+
+def _check_target_allowed(base_url: str) -> None:
+    """SSRF guard: scans accept arbitrary URLs (including unauthenticated
+    freemium requests), so private/internal addresses are refused unless
+    explicitly allowed for local development."""
+    from app.config import get_settings
+
+    if get_settings().CRAWLER_ALLOW_PRIVATE_HOSTS:
+        return
+    if is_private_host(base_url):
+        raise ValueError(f"Refusing to crawl private/internal host: {base_url}")
 
 
 def _strip_html(html: str) -> str:
@@ -98,6 +131,7 @@ async def crawl_domain(domain: str, max_pages: int) -> list[dict]:
     from crawl4ai import AsyncWebCrawler  # lazy: heavy browser dependency
 
     base_url = normalise_domain(domain)
+    _check_target_allowed(base_url)
     pages: list[dict] = []
 
     async with AsyncWebCrawler(headless=True, user_agent=random.choice(USER_AGENTS), verbose=False) as crawler:
@@ -128,6 +162,7 @@ async def crawl_homepage(domain: str) -> dict:
     from crawl4ai import AsyncWebCrawler  # lazy: heavy browser dependency
 
     base_url = normalise_domain(domain)
+    _check_target_allowed(base_url)
     async with AsyncWebCrawler(headless=True, user_agent=random.choice(USER_AGENTS), verbose=False) as crawler:
         page = await _fetch_page(crawler, base_url)
     if page is None:

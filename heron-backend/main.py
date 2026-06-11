@@ -1,5 +1,6 @@
 """Heron API — FastAPI application entry point."""
 
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 
@@ -13,6 +14,24 @@ from app.api.routes import ads, auth, billing, corpus, evidence, freemium, healt
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("heron")
+
+
+async def _cert_expiry_loop(interval_hours: int) -> None:
+    """Periodically notify users whose certificates expire within 60 days."""
+    from app.services.evidence_service import notify_expiring_certs
+
+    while True:
+        try:
+            db = await _connect()
+            try:
+                sent = await notify_expiring_certs(db)
+                if sent:
+                    logger.info("Sent %d certificate expiry notices", sent)
+            finally:
+                await db.close()
+        except Exception:
+            logger.exception("Certificate expiry check failed")
+        await asyncio.sleep(interval_hours * 3600)
 
 
 @asynccontextmanager
@@ -32,7 +51,9 @@ async def lifespan(app: FastAPI):
                 logger.info("Corpus reloaded for: %s", ", ".join(changed))
     finally:
         await db.close()
+    expiry_task = asyncio.create_task(_cert_expiry_loop(settings.CERT_EXPIRY_CHECK_HOURS))
     yield
+    expiry_task.cancel()
 
 
 def create_app() -> FastAPI:

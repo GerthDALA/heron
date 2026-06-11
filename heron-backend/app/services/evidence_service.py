@@ -60,6 +60,15 @@ async def save_evidence(
             raise ValueError("File must be PDF or JPG/PNG")
         if content_type and content_type not in ALLOWED_CONTENT_TYPES:
             raise ValueError(f"Unsupported content type: {content_type}")
+        # Content sniffing via libmagic when available; extension and
+        # declared content type remain the fallback validation.
+        try:
+            import magic
+            detected = magic.from_buffer(file_bytes[:4096], mime=True)
+            if detected not in ALLOWED_CONTENT_TYPES:
+                raise ValueError(f"File content is {detected}, expected PDF or JPG/PNG")
+        except ImportError:
+            logger.debug("python-magic unavailable — skipping content sniffing")
         if len(file_bytes) > settings.EVIDENCE_UPLOAD_MAX_MB * 1024 * 1024:
             raise ValueError(f"File exceeds {settings.EVIDENCE_UPLOAD_MAX_MB}MB limit")
         target_dir = Path(settings.EVIDENCE_STORAGE_PATH) / user_id

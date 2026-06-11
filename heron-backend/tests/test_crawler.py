@@ -26,6 +26,14 @@ def test_extract_page_strips_html():
     assert "var x=1" not in page["body_text"]
 
 
+def test_private_hosts_detected():
+    from app.engine.crawler import is_private_host
+    assert is_private_host("http://127.0.0.1:8080")
+    assert is_private_host("http://192.168.1.10")
+    assert is_private_host("http://10.0.0.5/admin")
+    assert is_private_host("http://[::1]:9000")
+
+
 def test_discover_product_urls_filters_and_limits():
     html = """
     <a href="/produit/serum-eclat">a</a>

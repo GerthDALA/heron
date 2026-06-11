@@ -5,6 +5,7 @@ replacement generation → report record + PDF → notification email.
 Any failure flips the scan to 'error' and is logged; nothing crashes.
 """
 
+import asyncio
 import logging
 import uuid
 from datetime import datetime, timezone
@@ -124,7 +125,10 @@ async def run_full_scan(scan_id: str, db: aiosqlite.Connection | None = None) ->
         plan = user_row["plan"] if user_row else "starter"
         max_pages = settings.MAX_PAGES_BRAND if plan in ("brand", "studio") else settings.MAX_PAGES_STARTER
 
-        pages = await crawler.crawl_domain(scan["domain"], max_pages)
+        pages = await asyncio.wait_for(
+            crawler.crawl_domain(scan["domain"], max_pages),
+            timeout=settings.SCAN_TIMEOUT_SECONDS,
+        )
         await db.execute(
             "UPDATE scans SET pages_scanned = ? WHERE id = ?", (len(pages), scan_id)
         )

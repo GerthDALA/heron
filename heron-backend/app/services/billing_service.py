@@ -66,13 +66,22 @@ async def handle_checkout_completed(db: aiosqlite.Connection, event: dict) -> st
     metadata = session.get("metadata") or {}
     user_id = metadata.get("user_id")
     plan = metadata.get("plan")
+    scan_id = metadata.get("scan_id")
     if user_id and plan in PLAN_PRICES:
         await db.execute(
             "UPDATE users SET plan = ?, stripe_customer_id = ? WHERE id = ?",
             (plan, session.get("customer"), user_id),
         )
+        if scan_id:
+            # Claim an unowned (freemium) scan so the paying user can access
+            # the full report; never reassign a scan another user owns.
+            await db.execute(
+                "UPDATE scans SET user_id = ?, is_freemium = 0 "
+                "WHERE id = ? AND user_id IS NULL",
+                (user_id, scan_id),
+            )
         await db.commit()
-    return metadata.get("scan_id")
+    return scan_id
 
 
 async def handle_subscription_deleted(db: aiosqlite.Connection, event: dict) -> None:
