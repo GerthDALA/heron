@@ -65,12 +65,14 @@ export default function FreemiumResultsPage() {
                 produit. Exposition totale : {formatEUR(result.total_exposure_eur)}.
               </div>
             )}
-            {Array.from({ length: Math.min(result.redacted_count, 3) }).map((_, i) => (
+            {result.redacted_claims.map((claim) => (
               <ClaimCard
-                key={`locked-${i}`}
-                originalText="Allégation masquée — visible dans le rapport complet"
-                article="EmpCo"
-                exposureEur={0}
+                key={claim.id}
+                originalText={claim.original_text}
+                detectedOn={claim.page_url}
+                article={claim.empco_article}
+                articleFullRef={claim.empco_article_full_ref}
+                exposureEur={claim.exposure_eur}
                 locked
               />
             ))}

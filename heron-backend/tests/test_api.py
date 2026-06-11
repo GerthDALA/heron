@@ -71,9 +71,25 @@ def test_freemium_scan_no_auth(client, fake_homepage):
     assert body["redacted_count"] >= 1
     assert body["total_exposure_eur"] > 0
     assert "checkout" in body["cta_url"]
+    # Redacted claims expose text/article/exposure but never the replacement
+    assert len(body["redacted_claims"]) == body["redacted_count"]
+    for claim in body["redacted_claims"]:
+        assert claim["original_text"]
+        assert claim["empco_article"]
+        assert claim["exposure_eur"] > 0
+        assert claim["replacement_text"] is None
     # Constraint 4: freemium never returns replacement text
     for claim in body["visible_claims"]:
         assert claim["replacement_text"] is None
+
+
+def test_list_scans_endpoint(client, fake_homepage):
+    token = register(client, "lister@test.fr")
+    # No scans yet
+    empty = client.get("/api/v1/scan", headers=auth_headers(token)).json()
+    assert empty == {"scans": [], "total": 0, "page": 1}
+    # Unauthenticated listing is rejected
+    assert client.get("/api/v1/scan").status_code == 401
 
 
 def test_scan_ownership_enforced(client, fake_homepage):

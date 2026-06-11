@@ -104,7 +104,13 @@ async def save_evidence(
             issue_date, valid_until, scope, file_path, file_original_name,
             verified, covers_claim_patterns, uploaded_at)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-        tuple(record.values()),
+        (
+            record["id"], record["user_id"], record["cert_type_id"],
+            record["cert_number"], record["cert_holder"], record["issuer_name"],
+            record["issue_date"], record["valid_until"], record["scope"],
+            record["file_path"], record["file_original_name"], record["verified"],
+            record["covers_claim_patterns"], record["uploaded_at"],
+        ),
     )
     await db.commit()
     return record

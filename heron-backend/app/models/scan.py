@@ -59,6 +59,15 @@ class FreemiumScanResponse(BaseModel):
     scan_id: str
     domain: str
     visible_claims: list[Claim]
+    # Redacted claims keep original text, article and exposure visible;
+    # replacement_text is always None on the freemium tier (paywall).
+    redacted_claims: list[Claim] = []
     redacted_count: int
     total_exposure_eur: float
     cta_url: str
+
+
+class ScanListPage(BaseModel):
+    scans: list[ScanResult]
+    total: int
+    page: int

@@ -19,7 +19,7 @@ export function AdsClaimCard({
       articleFullRef={claim.empco_article_full_ref}
       exposureEur={claim.exposure_eur}
       replacementText={claim.replacement_text}
-      locked={locked || (claim.replacement_text === null && !claim.replacement_generated)}
+      locked={locked}
     />
   );
 }

@@ -39,6 +39,8 @@ export const heronApi = {
   startScan: (domain: string, annualRevenue: number, planTier: string) =>
     api.post("/scan", { domain, annual_revenue_eur: annualRevenue, plan_tier: planTier }),
 
+  listScans: (page = 1) => api.get("/scan", { params: { page } }),
+
   getScanStatus: (scanId: string) => api.get(`/scan/${scanId}`),
 
   getScanClaims: (scanId: string) => api.get(`/scan/${scanId}/claims`),

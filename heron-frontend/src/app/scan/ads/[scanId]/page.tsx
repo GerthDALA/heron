@@ -10,7 +10,7 @@ import { formatEUR } from "@/lib/utils";
 import { INPUT_TYPES, type InputType } from "@/lib/constants";
 
 export default function AdsFreemiumResultsPage() {
-  const { adsResult, adsInputText } = useScanStore();
+  const { adsResult, adsInputText, adsInputType } = useScanStore();
 
   if (!adsResult) {
     return (
@@ -33,9 +33,10 @@ export default function AdsFreemiumResultsPage() {
     );
   }
 
-  const first = adsResult.visible_claims[0];
-  const sourceLabel = first ? "Texte soumis" : "—";
+  const sourceLabel = "Texte soumis";
   const plural = adsResult.total_claims > 1 ? "s" : "";
+  const typeLabel =
+    INPUT_TYPES[(adsInputType as InputType) || "other"]?.label.toLowerCase() || "texte";
 
   return (
     <>
@@ -43,7 +44,7 @@ export default function AdsFreemiumResultsPage() {
       <main className="mx-auto max-w-3xl px-4 py-12 space-y-8">
         <h1 className="text-2xl font-bold leading-snug">
           {adsResult.total_claims} allégation{plural} EmpCo identifiée{plural} dans votre{" "}
-          {INPUT_TYPES[(first ? "ad_copy" : "ad_copy") as InputType].label.toLowerCase()}.
+          {typeLabel}.
           <br />
           Exposition maximale totale :{" "}
           <span className="text-heron-danger">{formatEUR(adsResult.total_exposure_eur)}</span>.
@@ -74,7 +75,15 @@ export default function AdsFreemiumResultsPage() {
         ) : (
           <div className="space-y-6">
             {adsResult.visible_claims.map((claim) => (
-              <AdsClaimCard key={claim.id} claim={claim} sourceLabel={sourceLabel} />
+              <AdsClaimCard
+                key={claim.id}
+                claim={claim}
+                sourceLabel={sourceLabel}
+                locked={claim.replacement_text === null}
+              />
+            ))}
+            {adsResult.redacted_claims.map((claim) => (
+              <AdsClaimCard key={claim.id} claim={claim} sourceLabel={sourceLabel} locked />
             ))}
             {adsResult.redacted_count > 0 && (
               <div className="rounded-lg bg-heron-amber-bg p-4 text-sm font-medium text-heron-amber">

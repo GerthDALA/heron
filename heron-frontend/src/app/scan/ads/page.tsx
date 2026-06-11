@@ -39,7 +39,7 @@ export default function AdsFreemiumScanPage() {
       const res = hasToken
         ? await heronApi.startAdsPaidScan(inputType, inputTitle, inputText, revenue)
         : await heronApi.startAdsFreemiumScan(inputType, inputTitle, inputText, revenue, email);
-      setAdsResult(res.data, hasToken ? null : email, inputText);
+      setAdsResult(res.data, hasToken ? null : email, inputText, inputType);
       router.push(hasToken ? `/dashboard/ads/${res.data.scan_id}` : `/scan/ads/${res.data.scan_id}`);
     } catch (err: unknown) {
       const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail;

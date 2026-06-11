@@ -30,9 +30,16 @@ export interface FreemiumScanResult {
   scan_id: string;
   domain: string;
   visible_claims: Claim[];
+  redacted_claims: Claim[];
   redacted_count: number;
   total_exposure_eur: number;
   cta_url: string;
+}
+
+export interface ScanListPage {
+  scans: Scan[];
+  total: number;
+  page: number;
 }
 
 export interface Report {
@@ -113,6 +120,7 @@ export interface AdsScanResponse {
   total_claims: number;
   total_exposure_eur: number;
   visible_claims: Claim[];
+  redacted_claims: Claim[];
   redacted_count: number;
   is_freemium: boolean;
   note?: string | null;

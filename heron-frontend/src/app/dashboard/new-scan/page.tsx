@@ -6,11 +6,6 @@ import { heronApi } from "@/lib/api";
 import { ScanProgress } from "@/components/scan/ScanProgress";
 import { REVENUE_OPTIONS } from "@/lib/constants";
 
-function rememberScanId(id: string) {
-  const ids: string[] = JSON.parse(localStorage.getItem("heron_scan_ids") || "[]");
-  localStorage.setItem("heron_scan_ids", JSON.stringify([id, ...ids.filter((x) => x !== id)]));
-}
-
 export default function NewScanPage() {
   const router = useRouter();
   const [domain, setDomain] = useState("");
@@ -30,7 +25,6 @@ export default function NewScanPage() {
     try {
       const res = await heronApi.startScan(domain, revenue, planTier);
       const id = res.data.scan_id;
-      rememberScanId(id);
       setScanId(id);
       pollRef.current = setInterval(async () => {
         const status = await heronApi.getScanStatus(id);

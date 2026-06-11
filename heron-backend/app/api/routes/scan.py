@@ -5,7 +5,9 @@ import aiosqlite
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 
 from app.api.deps import get_current_user, get_db, get_owned_scan
-from app.models.scan import Claim, ClaimsPage, ScanAccepted, ScanRequest, ScanResult
+from app.models.scan import (
+    Claim, ClaimsPage, ScanAccepted, ScanListPage, ScanRequest, ScanResult,
+)
 from app.services import scan_service
 
 router = APIRouter(prefix="/scan", tags=["scan"])
@@ -36,6 +38,33 @@ async def create_scan(
     background_tasks.add_task(scan_service.run_full_scan, scan_id)
     estimated = 120 if body.plan_tier == "starter" else 480
     return ScanAccepted(scan_id=scan_id, estimated_seconds=estimated)
+
+
+@router.get("", response_model=ScanListPage)
+async def list_scans(
+    page: int = 1,
+    page_size: int = 50,
+    user: dict = Depends(get_current_user),
+    db: aiosqlite.Connection = Depends(get_db),
+):
+    cursor = await db.execute("SELECT COUNT(*) FROM scans WHERE user_id = ?", (user["id"],))
+    (total,) = await cursor.fetchone()
+    cursor = await db.execute(
+        """SELECT * FROM scans WHERE user_id = ?
+           ORDER BY created_at DESC LIMIT ? OFFSET ?""",
+        (user["id"], page_size, (page - 1) * page_size),
+    )
+    rows = await cursor.fetchall()
+    scans = [
+        ScanResult(
+            scan_id=r["id"], status=r["status"], domain=r["domain"],
+            total_claims=r["total_claims"], total_exposure_eur=r["total_exposure_eur"],
+            pages_scanned=r["pages_scanned"], created_at=r["created_at"],
+            completed_at=r["completed_at"],
+        )
+        for r in rows
+    ]
+    return ScanListPage(scans=scans, total=total, page=page)
 
 
 @router.get("/{scan_id}", response_model=ScanResult)

@@ -26,17 +26,10 @@ export default function DashboardHome() {
   const [evidence, setEvidence] = useState<EvidenceSummary | null>(null);
 
   useEffect(() => {
-    // Scan IDs launched in this browser are tracked locally; the backend
-    // exposes per-scan endpoints, ownership-checked.
-    const ids: string[] = JSON.parse(localStorage.getItem("heron_scan_ids") || "[]");
-    Promise.allSettled(ids.map((id) => heronApi.getScanStatus(id))).then((results) => {
-      setScans(
-        results
-          .filter((r) => r.status === "fulfilled")
-          .map((r) => (r as PromiseFulfilledResult<{ data: Scan }>).value.data)
-      );
-      setLoaded(true);
-    });
+    heronApi
+      .listScans()
+      .then((res) => setScans(res.data.scans))
+      .finally(() => setLoaded(true));
     heronApi.getEvidenceSummary().then((res) => setEvidence(res.data)).catch(() => null);
   }, []);
 

@@ -12,7 +12,13 @@ interface ScanState {
   adsResult: AdsScanResponse | null;
   adsEmail: string | null;
   adsInputText: string | null;
-  setAdsResult: (result: AdsScanResponse, email: string | null, inputText: string) => void;
+  adsInputType: string | null;
+  setAdsResult: (
+    result: AdsScanResponse,
+    email: string | null,
+    inputText: string,
+    inputType: string
+  ) => void;
 }
 
 export const useScanStore = create<ScanState>((set) => ({
@@ -22,6 +28,7 @@ export const useScanStore = create<ScanState>((set) => ({
   adsResult: null,
   adsEmail: null,
   adsInputText: null,
-  setAdsResult: (result, email, inputText) =>
-    set({ adsResult: result, adsEmail: email, adsInputText: inputText }),
+  adsInputType: null,
+  setAdsResult: (result, email, inputText, inputType) =>
+    set({ adsResult: result, adsEmail: email, adsInputText: inputText, adsInputType: inputType }),
 }));

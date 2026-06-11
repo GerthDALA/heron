@@ -21,7 +21,8 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: list[str] = ["http://localhost:3000"]
     MAX_PAGES_STARTER: int = 500
     MAX_PAGES_BRAND: int = 3000
-    SCAN_TIMEOUT_SECONDS: int = 600  # 10 minutes
+    SCAN_TIMEOUT_SECONDS: int = 600  # 10 minutes (full domain scans)
+    FREEMIUM_TIMEOUT_SECONDS: int = 120  # homepage-only freemium scans
     FREEMIUM_MAX_CLAIMS_VISIBLE: int = 1  # Show 1 full, redact rest
     HERON_FROM_EMAIL: str = "heron@yourdomain.com"
     FRONTEND_URL: str = "http://localhost:3000"

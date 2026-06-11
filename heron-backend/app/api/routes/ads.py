@@ -56,6 +56,8 @@ class AdsScanResponse(BaseModel):
     total_claims: int
     total_exposure_eur: float
     visible_claims: list[Claim]
+    # Freemium: redacted claims keep text/article/exposure, never the replacement.
+    redacted_claims: list[Claim] = []
     redacted_count: int
     is_freemium: bool
     note: Optional[str] = None
@@ -141,10 +143,15 @@ async def create_ads_scan(
     )
     await db.commit()
 
+    redacted_claims: list[Claim] = []
     if is_freemium:
         visible = [c for c in claims if c["is_visible_freemium"]]
         visible_claims = [_row_to_claim(c, redact_replacement=True) for c in visible]
-        redacted = len(claims) - len(visible)
+        redacted_claims = [
+            _row_to_claim(c, redact_replacement=True)
+            for c in claims if not c["is_visible_freemium"]
+        ]
+        redacted = len(redacted_claims)
         email_service.send_freemium_report(body.email, {
             "domain": body.input_title or "votre copy publicitaire",
             "total_claims": len(claims),
@@ -162,6 +169,7 @@ async def create_ads_scan(
         total_claims=len(claims),
         total_exposure_eur=total_exposure,
         visible_claims=visible_claims,
+        redacted_claims=redacted_claims,
         redacted_count=redacted,
         is_freemium=is_freemium,
         note=TRANSCRIPT_NOTE if body.input_type == "transcript" else None,

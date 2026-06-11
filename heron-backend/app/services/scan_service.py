@@ -230,7 +230,16 @@ async def run_freemium_scan(
 
     rules = await load_rules(db)
     engine = RegexEngine(rules)
-    page = await crawler.crawl_homepage(domain)
+    try:
+        page = await asyncio.wait_for(
+            crawler.crawl_homepage(domain),
+            timeout=settings.FREEMIUM_TIMEOUT_SECONDS,
+        )
+    except asyncio.TimeoutError:
+        raise ValueError(
+            f"Le scan de {domain} a dépassé {settings.FREEMIUM_TIMEOUT_SECONDS} secondes. "
+            "Vérifiez que la page d'accueil répond et réessayez."
+        )
     matches = engine.match_all_pages([page])
 
     claims = await persist_claims(

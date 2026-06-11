@@ -1,7 +1,19 @@
+"use client";
+
 import { ExpiryBadge } from "./ExpiryBadge";
 import { CoverageTag } from "./CoverageTag";
 import { formatDate } from "@/lib/utils";
+import api from "@/lib/api";
 import type { EvidenceRecord } from "@/types/api";
+
+// Plain <a> links cannot carry the JWT header — fetch the file as a blob
+// through the authenticated client and open it in a new tab.
+async function openFile(evidenceId: string) {
+  const res = await api.get(`/evidence/${evidenceId}/file`, { responseType: "blob" });
+  const url = URL.createObjectURL(res.data);
+  window.open(url, "_blank");
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
 
 export function EvidenceCard({
   record,
@@ -55,13 +67,9 @@ export function EvidenceCard({
         </span>
         <div className="space-x-3 text-sm">
           {record.file_url && (
-            <a
-              href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}${record.file_url.replace("/api/v1", "")}`}
-              target="_blank"
-              className="text-heron-teal hover:underline"
-            >
+            <button onClick={() => openFile(record.id)} className="text-heron-teal hover:underline">
               Voir le fichier
-            </a>
+            </button>
           )}
           <button onClick={() => onDelete(record.id)} className="text-heron-danger hover:underline">
             Supprimer

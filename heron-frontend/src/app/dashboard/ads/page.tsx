@@ -28,7 +28,7 @@ export default function DashboardAdsPage() {
     setScanning(true);
     try {
       const res = await heronApi.startAdsPaidScan(inputType, inputTitle, inputText, revenue);
-      setAdsResult(res.data, null, inputText);
+      setAdsResult(res.data, null, inputText, inputType);
       router.push(`/dashboard/ads/${res.data.scan_id}`);
     } catch {
       setError("L'analyse a échoué. Vérifiez que le texte fait entre 10 et 50 000 caractères et réessayez.");
